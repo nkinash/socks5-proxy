@@ -34,7 +34,16 @@ fi
 
 REPO="https://github.com/nkinash/socks5-proxy.git"
 BIN_PATH="/usr/local/bin/sock5"
-SVC_FILE="/etc/systemd/system/sock5.service"
+
+detect_systemd_dir() {
+    local dir
+    for dir in /etc/systemd/system /usr/lib/systemd/system /lib/systemd/system; do
+        [[ -d "$dir" ]] && echo "$dir" && return
+    done
+    echo "/etc/systemd/system"
+}
+SVC_DIR=$(detect_systemd_dir)
+SVC_FILE="$SVC_DIR/sock5.service"
 
 TMPDIR=$(mktemp -d)
 trap "rm -rf $TMPDIR" EXIT
