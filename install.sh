@@ -6,13 +6,22 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+command -v go >/dev/null 2>&1  || { echo "установи Go (https://go.dev/doc/install)"; exit 1; }
+command -v git >/dev/null 2>&1 || { echo "установи git"; exit 1; }
+command -v curl >/dev/null 2>&1 || { echo "установи curl"; exit 1; }
+
+REPO="https://github.com/nkinash/socks5-proxy.git"
 BIN_PATH="/usr/local/bin/sock5"
 SVC_FILE="/etc/systemd/system/sock5.service"
 
-# --- сборка ---
+TMPDIR=$(mktemp -d)
+trap "rm -rf $TMPDIR" EXIT
+
+echo "==> клонирование..."
+git clone -q "$REPO" "$TMPDIR"
+
 echo "==> сборка..."
-cd "$SCRIPT_DIR"
+cd "$TMPDIR"
 go build -o "$BIN_PATH" ./cmd/sock5/
 
 # --- генерация логина и пароля ---
