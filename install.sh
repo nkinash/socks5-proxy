@@ -102,6 +102,22 @@ EOF
 systemctl daemon-reload
 systemctl enable --now sock5
 
+# --- проверка статуса ---
+echo "==> проверка статуса сервиса..."
+for i in $(seq 1 10); do
+    if systemctl is-active --quiet sock5 2>/dev/null; then
+        echo "==> сервис активен"
+        break
+    fi
+    sleep 0.5
+done
+
+if ! systemctl is-active --quiet sock5 2>/dev/null; then
+    echo "==> ОШИБКА: сервис не запустился"
+    echo "==> проверь логи: journalctl -u sock5 -n 20"
+    exit 1
+fi
+
 echo ""
 echo "============================================"
 echo "  SOCKS5 прокси запущен"
