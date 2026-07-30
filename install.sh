@@ -6,8 +6,15 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-command -v git >/dev/null 2>&1  || { echo "установи git (apt install git)"; exit 1; }
-command -v curl >/dev/null 2>&1 || { echo "установи curl (apt install curl)"; exit 1; }
+ensure_pkg() {
+    local pkg=$1
+    command -v "$pkg" >/dev/null 2>&1 && return
+    echo "==> установка $pkg..."
+    apt-get update -qq && apt-get install -y -qq "$pkg"
+}
+
+ensure_pkg git
+ensure_pkg curl
 
 install_go() {
     local ver arch

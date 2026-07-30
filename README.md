@@ -8,8 +8,6 @@ SOCKS5-прокси на Go, один бинарник.
 wget -qO- https://raw.githubusercontent.com/nkinash/socks5-proxy/master/install.sh | sudo bash
 ```
 
-Требования: Go, git, curl, systemd (Ubuntu/Debian).
-
 ## Установка из репозитория
 
 ```bash
