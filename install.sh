@@ -70,7 +70,15 @@ detect_ip() {
 }
 
 IP=$(detect_ip)
-PORT=1080
+
+pick_port() {
+    local port=$1
+    while ss -tlnp 2>/dev/null | grep -q ":$port "; do
+        port=$((port + 1))
+    done
+    echo "$port"
+}
+PORT=$(pick_port 1080)
 
 # --- systemd unit ---
 cat > "$SVC_FILE" <<EOF
