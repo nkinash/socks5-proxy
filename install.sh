@@ -6,9 +6,24 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-command -v go >/dev/null 2>&1  || { echo "установи Go (https://go.dev/doc/install)"; exit 1; }
-command -v git >/dev/null 2>&1 || { echo "установи git"; exit 1; }
-command -v curl >/dev/null 2>&1 || { echo "установи curl"; exit 1; }
+command -v git >/dev/null 2>&1  || { echo "установи git (apt install git)"; exit 1; }
+command -v curl >/dev/null 2>&1 || { echo "установи curl (apt install curl)"; exit 1; }
+
+install_go() {
+    local ver arch
+    ver=$(curl -s https://go.dev/VERSION?m=text 2>/dev/null | head -1)
+    ver="${ver#go}"
+    [[ -n "$ver" ]] || ver="1.24.0"
+    arch="linux-amd64"
+
+    echo "==> установка Go $ver..."
+    curl -sSL "https://go.dev/dl/go${ver}.${arch}.tar.gz" | tar -C /usr/local -xz
+    export PATH="/usr/local/go/bin:$PATH"
+}
+
+if ! command -v go >/dev/null 2>&1; then
+    install_go
+fi
 
 REPO="https://github.com/nkinash/socks5-proxy.git"
 BIN_PATH="/usr/local/bin/sock5"
